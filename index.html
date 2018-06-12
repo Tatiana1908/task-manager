@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Task manager</title>
+
+    <!-- font awesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main>
+        <span class="add-task-btn"><i class="fas fa-plus-circle"></i></span>
+        <div class="add-task-overlay">
+            <div class="add-task-modal">
+                <form action="" >
+                    <div class="input-block">
+                        <span>Description: </span>
+                        <input type="text" name="description" placeholder="Enter task description" class="input-default new-task-desc">
+                    </div>
+                    <div class="input-block">
+                        <span>Date: </span>
+                        <input type="text" name="date" placeholder="DD-MM-YY h:m:s" class="input-default new-task-date">
+                    </div>
+                    <div class="error"></div>
+                    <button class="btn-default cancel-create-task">CANCEL</button>
+                    <button class="btn-default conf-create-task">ADD</button>
+                </form>
+            </div>
+        </div>
+        <div class="task-wrapper">
+
+        </div>
+
+    </main>
+<script src="index.js"></script>
+
+</body>
+</html>
