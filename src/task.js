@@ -1,95 +1,61 @@
-import request from './serverRequest'
-import { getTasks } from './api'
+
+import { removeTask} from './api'
 import { handleApiCall } from './utils'
-// import getTasks 
-
-// components/card
-
-// export default function createTask() {
-//     let desc = task.description,
-//             time = Date.parse(task.date);
-    
-//     const card = document.createElement('div');
-//     card.classList.add('task-item');
-
-//     card.id = task.id;
-//     card.innerHTML = `<span class="task-desc">${desc}</span> <span class="time"></span>`;
-
-//     return card
-// }
-
-
-
-// render() {
-//     const task = createTask(data)
-//     setTask(task)
-// }
+import tasksList from './tasks-list'
 
 const msInHour = 3600000;
 const msInMinute = 60000;
 const msInSecond = 1000;
 
 export default class Task{
-    constructor(){
+    constructor(task) {
         this.taskWrap = document.querySelector('.task-wrapper');
+        this.task = task;
     }
-    init(){
-        // let options = { method: 'get' }
-        // let req = request('http://localhost:3000/tasks', options, (tasks) => {
-        //     this.taskWrap.innerHTML = '';
-        //     tasks.forEach(task => this.render(task))
-        // }, () => {
-        //     this.taskWrap.innerHTML = '';
-        // })
-        // req()
-        // getTasks()
-        //     .then(tasks => tasks.json())
-        //     .then(tasks => tasks.forEach(task => this.render(task)))
-        handleApiCall(getTasks, tasks => tasks.forEach(task => this.render(task)))
-        // const tasks = getTasks()
-        // tasks.forEach(this.render)
-       
-    }
-    render(task){
-        let desc = task.description,
-            time = Date.parse(task.date);
+    renderTask(){
+        let desc = this.task.description,
+            time = Date.parse(this.task.date);
            
         let card = document.createElement('div');
         card.classList.add('task-item');
-        card.id = task.id;
+        card.id = this.task.id;
         card.innerHTML = `<span class="task-desc">${desc}</span> <span class="time"></span>`;
-        let busket = document.createElement('span');
-        busket.classList.add('remove-item-btn');
-        busket.innerHTML = '<i class="fas fa-trash"></i>';
+        let basket = document.createElement('span');
+        basket.classList.add('remove-item-btn');
+        basket.innerHTML = '<i class="fas fa-trash"></i>';
 
-        card.appendChild(busket)
+        card.appendChild(basket);
         this.taskWrap.appendChild(card);
 
         this.timer(card, time);
-        this.listenersOnRemove(busket, card);
+        this.listenerOnRemove(basket, card);
     }
     timer(card, time) {
         let timerDOM = card.querySelector('.time');
         timerDOM.innerHTML = 'wait';
     
-        setInterval(() => {
-            let hours = (time - Date.now()) /  msInHour;
-            let minutes = ((time - Date.now()) % msInHour) / msInMinute;
-            let seconds = (((time - Date.now()) % msInHour) % msInMinute) / msInSecond;
-            timerDOM.innerHTML = `${parseInt(hours)} : ${parseInt(minutes)} : ${parseInt(seconds)}`
-        }, 1000)
+        let interval = setInterval(() => {
+            if ((time - Date.now()) > 0){
+                let hours = (time - Date.now()) /  msInHour;
+                let minutes = ((time - Date.now()) % msInHour) / msInMinute;
+                let seconds = (((time - Date.now()) % msInHour) % msInMinute) / msInSecond;
+                timerDOM.innerHTML = `${parseInt(hours)} : ${parseInt(minutes)} : ${parseInt(seconds)}`;
+            }else{
+                handleOnTimeOver()
+            }
+        }, 1000);
+        interval();
+
+        function handleOnTimeOver() {
+            alert('time is over')
+            clearInterval(interval)
+        }
     }
-    listenersOnRemove(btn){
+
+    listenerOnRemove(btn){
         btn.addEventListener('click', () => {
             let id = btn.closest('.task-item').id;
-            let options = { method: 'delete'}
-            let req = request(`http://localhost:3000/tasks/${id}`, options, 
-            (req) => {
-                this.init()
-            }, () => {
-                console.log('ERR')
-            })
-            req()
+            handleApiCall(removeTask(id), () => tasksList().init());
         })
     }
 }

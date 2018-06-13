@@ -1,5 +1,7 @@
-import request from './serverRequest'
-import Task from './task'
+
+import {handleApiCall} from "./utils";
+import { postTask} from "./api";
+import tasksList from './tasks-list'
 
 export class Modal {
     constructor(){
@@ -11,19 +13,9 @@ export class Modal {
         this.taskDescr = document.querySelector('.new-task-desc');
         this.taskDate = document.querySelector('.new-task-date');
         this.errorBlock = document.querySelector('.error');
-        
-        this.tasksArr = [];
+
     }
     init(){
-
-        let req = request('http://localhost:3000/tasks', {method: 'get'}, 
-        (req) => {
-            this.tasksArr = req;
-        }, () => {
-            this.taskWrap.innerHTML = '';
-        })
-        req()
-
         this.addTaskBtn.addEventListener('click', () => {
             this.toggleModal()
         });
@@ -37,7 +29,7 @@ export class Modal {
             this.toggleModal()
         });
         this.addNewData.addEventListener('click', (e) => {
-            e.preventDefault()
+            e.preventDefault();
             this.inputValidate()
         });
     }
@@ -47,10 +39,10 @@ export class Modal {
             taskDesc = this.taskDescr.value;
 
         if (!taskDesc || !date) {
-            this.error('All fields must be fill');
+            this.errorRender('All fields must be fill');
             correct = false;
         } else if (!Date.parse(date) || (Date.now() > Date.parse(date))) {
-            this.error('Incorrect format of date');
+            this.errorRender('Incorrect format of date');
             correct = false;
         }
         if (correct) {
@@ -59,36 +51,19 @@ export class Modal {
                 date: date,
                 id: Math.random()
             };
-    
-            this.errorBlock.textContent = '';
-            
-            let req = request('http://localhost:3000/tasks', 
-                {
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    method: 'post',
-                    body: JSON.stringify(newTaskData)
-                }, 
-                (req) => {
-                   
-                    let newTask = new Task();
-                    newTask.init();
-                    this.toggleModal();
-                
-                }, () => {
-                    console.log('err')
-                }) 
 
-            req();
-    
+            this.errorBlock.textContent = '';
+
+            handleApiCall(postTask(newTaskData), () => {
+                tasksList().init();
+                this.toggleModal();
+            })
         }
     }
     toggleModal(){
         this.overlay.classList.toggle('visible')
     }
-    error(errorText){
+    errorRender(errorText){
         this.errorBlock.textContent = errorText;
     }
 }
