@@ -64,6 +64,7 @@ export default class Task{
     }
     timer(card, time) {
         let timerDOM = card.querySelector('.time');
+        timerDOM.innerHTML = 'wait';
     
         setInterval(() => {
             let hours = (time - Date.now()) / 3600000 ;
@@ -76,10 +77,6 @@ export default class Task{
         btn.addEventListener('click', () => {
             let id = btn.closest('.task-item').id;
             let options = { method: 'delete'}
-            // let newTaskList = this.tasks.filter( task => task.id != card.id);
-
-            // sessionStorage.setItem('tasks', JSON.stringify(newTaskList));
-
             let req = request(`http://localhost:3000/tasks/${id}`, options, 
             (req) => {
                 this.init()

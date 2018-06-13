@@ -1,4 +1,5 @@
 import request from './serverRequest'
+import Task from './task'
 
 export class Modal {
     constructor(){
@@ -14,12 +15,9 @@ export class Modal {
         this.tasksArr = [];
     }
     init(){
-        // if (sessionStorage.getItem('tasks')){
-        //     this.tasksArr = JSON.parse(sessionStorage.getItem('tasks'));
-        // }
-        // sessionStorage.removeItem('tasks');
 
-        let req = request('http://localhost:3000/tasks', {method: 'get'}, (req) => {
+        let req = request('http://localhost:3000/tasks', {method: 'get'}, 
+        (req) => {
             this.tasksArr = req;
         }, () => {
             this.taskWrap.innerHTML = '';
@@ -38,7 +36,8 @@ export class Modal {
         this.cancelBtn.addEventListener('click', () => {
             this.toggleModal()
         });
-        this.addNewData.addEventListener('click', () => {
+        this.addNewData.addEventListener('click', (e) => {
+            e.preventDefault()
             this.inputValidate()
         });
     }
@@ -58,30 +57,32 @@ export class Modal {
             let newTaskData = {
                 description: taskDesc,
                 date: date,
-                id: this.tasksArr.length
-            }
+                id: Math.random()
+            };
+    
             this.errorBlock.textContent = '';
             
-            // sessionStorage.setItem('tasks', JSON.stringify(this.tasksArr))
-            // let req = new Request('http://localhost:3000/tasks', 
-            //     {
-            //         method: 'post',
-            //         header: "application/json",
-            //         body: newTaskData
-            //     }, 
-            //     (req) => {
-            //         this.tasksArr = req;
-            //     }, () => {
-            //         this.taskWrap.innerHTML = '';
-            //     }) 
+            let req = request('http://localhost:3000/tasks', 
+                {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    method: 'post',
+                    body: JSON.stringify(newTaskData)
+                }, 
+                (req) => {
+                   
+                    let newTask = new Task();
+                    newTask.init();
+                    this.toggleModal();
+                
+                }, () => {
+                    console.log('err')
+                }) 
 
-            // req.init()
-            
-            let newTask = new Task();
-            newTask.init();
-
-            this.toggleModal();
-            
+            req();
+    
         }
     }
     toggleModal(){
