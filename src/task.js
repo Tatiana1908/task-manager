@@ -1,4 +1,6 @@
 import request from './serverRequest'
+import { getTasks } from './api'
+import { handleApiCall } from './utils'
 // import getTasks 
 
 // components/card
@@ -23,23 +25,27 @@ import request from './serverRequest'
 //     setTask(task)
 // }
 
-
+const msInHour = 3600000;
+const msInMinute = 60000;
+const msInSecond = 1000;
 
 export default class Task{
     constructor(){
         this.taskWrap = document.querySelector('.task-wrapper');
     }
     init(){
-        let options = { method: 'get' }
-        let req = request('http://localhost:3000/tasks', options, (req) => {
-            this.taskWrap.innerHTML = '';
-            for(let i = 0; i < req.length; i++){
-                this.render(req[i])
-            }
-        }, () => {
-            this.taskWrap.innerHTML = '';
-        })
-        req()
+        // let options = { method: 'get' }
+        // let req = request('http://localhost:3000/tasks', options, (tasks) => {
+        //     this.taskWrap.innerHTML = '';
+        //     tasks.forEach(task => this.render(task))
+        // }, () => {
+        //     this.taskWrap.innerHTML = '';
+        // })
+        // req()
+        // getTasks()
+        //     .then(tasks => tasks.json())
+        //     .then(tasks => tasks.forEach(task => this.render(task)))
+        handleApiCall(getTasks, tasks => tasks.forEach(task => this.render(task)))
         // const tasks = getTasks()
         // tasks.forEach(this.render)
        
@@ -67,11 +73,11 @@ export default class Task{
         timerDOM.innerHTML = 'wait';
     
         setInterval(() => {
-            let hours = (time - Date.now()) / 3600000 ;
-            let minutes = ((time - Date.now()) % 3600000) / 60000;
-            let seconds = (((time - Date.now()) % 3600000) % 60000) / 1000;
+            let hours = (time - Date.now()) /  msInHour;
+            let minutes = ((time - Date.now()) % msInHour) / msInMinute;
+            let seconds = (((time - Date.now()) % msInHour) % msInMinute) / msInSecond;
             timerDOM.innerHTML = `${parseInt(hours)} : ${parseInt(minutes)} : ${parseInt(seconds)}`
-        }, 500)
+        }, 1000)
     }
     listenersOnRemove(btn){
         btn.addEventListener('click', () => {
@@ -81,7 +87,7 @@ export default class Task{
             (req) => {
                 this.init()
             }, () => {
-                this.taskWrap.innerHTML = 'Error';
+                console.log('ERR')
             })
             req()
         })

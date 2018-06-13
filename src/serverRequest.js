@@ -1,4 +1,4 @@
-export default function request (link, options, resolve, reject) {
+export default function request(link, options, resolve, reject) {
 
     return function() {
         console.log(options)
