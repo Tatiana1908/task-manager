@@ -1,22 +1,16 @@
 {
   "tasks": [
     {
-      "description": "task3",
+      "description": "task1",
       "date": "2018-06-18",
       "expired": false,
       "id": 1
     },
     {
-      "description": "task4",
+      "description": "task2",
       "date": "2018-06-15",
       "expired": false,
       "id": 2
-    },
-    {
-      "description": "task4",
-      "date": "2018-06-12",
-      "expired": true,
-      "id": 4
     }
   ]
 }

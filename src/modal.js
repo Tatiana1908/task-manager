@@ -4,6 +4,7 @@ import { postTask } from "./api";
 import tasksList from './tasks-list'
 
 export class Modal {
+
     constructor(){
         this.addTaskBtn = document.querySelector('.add-task-btn');
         this.overlay = document.querySelector('.add-task-overlay');
@@ -12,9 +13,10 @@ export class Modal {
         this.addNewData = document.querySelector('.conf-create-task');
         this.taskDescr = document.querySelector('.new-task-desc');
         this.taskDate = document.querySelector('.new-task-date');
-        this.errorBlock = document.querySelector('.error');
+        this.errorBlock = document.querySelector('.error-wrap');
 
     }
+
     init(){
         this.addTaskBtn.addEventListener('click', () => {
             this.toggleModal()
@@ -33,6 +35,7 @@ export class Modal {
             this.inputValidate()
         });
     }
+
     inputValidate() {
         let correct = true,
             date = this.taskDate.value,
@@ -60,9 +63,11 @@ export class Modal {
             })
         }
     }
+
     toggleModal(){
         this.overlay.classList.toggle('visible')
     }
+
     errorRender(errorText){
         this.errorBlock.textContent = errorText;
     }

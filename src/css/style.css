@@ -99,3 +99,28 @@
     min-width: 350px;
     padding: 10px 0;
 }
+.add-task-btn{
+    width: 30px;
+    height: 30px;
+    font-size: 40px;
+    font-weight: 800;
+}
+.remove-item-btn{
+    transform: rotate(45deg);
+    font-weight: 800;
+    font-size: 30px;
+}
+.error-wrap{
+    padding-bottom: 15px;
+    color: red;
+    text-align: center;
+}
+.btn-default{
+    background: lightsteelblue;
+    padding: 10px 20px;
+    border: none;
+}
+.btn-default:hover{
+    cursor: pointer;
+    box-shadow: 1px 1px 9px grey;
+}
