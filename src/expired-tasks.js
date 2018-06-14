@@ -1,9 +1,9 @@
-import { removeTimeOverTask, getTimeOverTasks , postTimeOverTasks} from './api'
+import { getExpiredTasks, removeTask as removeTaskApi } from './api'
 import { handleApiCall } from './utils'
 import tasksBlock from './tasks-list'
 
 export default function timeOverTask() {
-    let i;
+    let currentOpenExpiredTaskModal = 0;
 
     let overlay = document.querySelector('.expired-tasks-overlay');
     let descrEl = document.querySelector('.expired-tasks-overlay .description');
@@ -12,65 +12,74 @@ export default function timeOverTask() {
     let nextBtn = document.querySelector('.expired-tasks-modal .next');
     let prevBtn = document.querySelector('.expired-tasks-modal .prev');
     let removeBtn = document.querySelector('.remove-task');
-    let tasksList = [];
+    let expiredTasksList = [];
+    let isRemoveListenerAdded = false;
 
-    const addExpiredTask = (task) => {
-        handleApiCall( () => postTimeOverTasks(task), renderExpiredTasks)
-    };
-    function renderExpiredTasks() {
-        i = 0;
-
-        handleApiCall(getTimeOverTasks, tasks => {
-            console.log(tasks)
-
-            if(tasks.length){
-                tasksList = tasks;
-                overlay.classList.add('visible');
-                controlBtns()
-                renderCurent()
-                listenerOnRemoveTask()
-            }
-            
-        })
-     
+    function init() {
+        controlBtns()
+        
     }
-    function listenerOnRemoveTask() {
-        removeBtn.addEventListener('click', () => {
-            handleApiCall(() => removeTimeOverTask(tasksList[i].id), (e) => {
-                e.preventDefault()
-                console.log('remove')
-                debugger
-                tasksList = tasksList.filter(task => task.id != tasksList[i].id);
-                console.log(tasksList)
-                i = 0;
-                if(tasksList.length){
-                    renderCurent()
-                }else{
-                    overlay.classList.remove('visible');
-                }
-                // 
-                // tasksBlock().renderTasks()
-            } )
+    function render() {
+        currentOpenExpiredTaskModal = 0;
+        handleApiCall(getExpiredTasks, tasks => {
+            if (!tasks) {
+                overlay.classList.remove('visible');
+                return;
+            }
+
+            listenerOnRemoveTask()
+            renderExpiredTasks(tasks) 
         })
+    }
+
+    function renderExpiredTasks(tasks) {
+        if (!tasks.length) {
+            return
+        }
+
+        expiredTasksList = tasks;
+        overlay.classList.add('visible');
+        renderCurrent()
+    }
+
+    const getCurrentOpenedTaskId = () => expiredTasksList[currentOpenExpiredTaskModal].id
+    const removeTask = () => removeTaskApi(getCurrentOpenedTaskId())
+
+    function removeButtonClickHandler() {
+        handleApiCall(removeTask, () => {
+            render()
+            tasksBlock().init()
+        })
+    }
+
+    function listenerOnRemoveTask() {
+        if (!expiredTasksList || isRemoveListenerAdded) {
+            return
+        }
+
+        isRemoveListenerAdded = true;
+        removeBtn.addEventListener('click', removeButtonClickHandler)
     }
     function controlBtns(){
         nextBtn.addEventListener('click', () => {
-               // debugger
-            if( i < tasksList.length ){
-                i++;
-                renderCurent()
+    
+            if( currentOpenExpiredTaskModal < expiredTasksList.length - 1 ){
+                currentOpenExpiredTaskModal++;
+                console.log(currentOpenExpiredTaskModal)
+                renderCurrent()
                 // nextBtn.classList.remove('hidden')
                 // prevBtn.classList.remove('hidden')
 
             }
-            // else if (i = tasksList.length-1){
+            // else if (i = expiredTasksList.length-1){
             //     nextBtn.classList.add('hidden')
             // }
         })
         prevBtn.addEventListener('click', () => {
-            if( i > 0 ){
-                i--;
-                renderCurent()
+
+            if( currentOpenExpiredTaskModal > 0 ){
+                currentOpenExpiredTaskModal--;
+                renderCurrent()
                 // prevBtn.classList.remove('hidden')
                 // nextBtn.classList.remove('hidden')
             }
@@ -80,15 +89,15 @@ export default function timeOverTask() {
         })
     }
     
-    function renderCurent(){
+    function renderCurrent(){
 
-        descrEl.innerHTML = tasksList[i].description;
-        number.innerHTML = `${++i}`
+        descrEl.innerHTML = expiredTasksList[currentOpenExpiredTaskModal].description;
+        number.innerHTML = `${currentOpenExpiredTaskModal +1}`
     }
  
     return {
-        addExpiredTask,
-        renderExpiredTasks
+        init,
+        render
     }
 
 }

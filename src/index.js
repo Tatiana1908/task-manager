@@ -12,4 +12,5 @@ let modal = new Modal;
 modal.init();
 
 tasksList().init();
-// timeOverTask().renderExpiredTasks();
+
+timeOverTask().init()

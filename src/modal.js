@@ -49,7 +49,7 @@ export class Modal {
             let newTaskData = {
                 description: taskDesc,
                 date: date,
-                id: Math.random()
+                expired: false
             };
 
             this.errorBlock.textContent = '';

@@ -1,6 +1,6 @@
 
-import { removeTask } from './api'
-import { handleApiCall } from './utils'
+import { removeTask, updateTask } from './api'
+import { handleApiCall,handleApiCallEnhancer } from './utils'
 import tasksList from './tasks-list'
 import timeOverTasks from './expired-tasks'
 
@@ -43,22 +43,31 @@ export default class Task{
                 let seconds = (((this.time - Date.now()) % msInHour) % msInMinute) / msInSecond;
                 return timerDOM.innerHTML = `${parseInt(hours)} : ${parseInt(minutes)} : ${parseInt(seconds)}`;
             }else{
-                handleOnTimeOver(this.desc, this.id)
+                handleOnTimeOver(this.id)
             }
         }, 1000);
 
-        function handleOnTimeOver(desc, id) {
-            let timeOverTaskInfo = {
-                description: desc,
-                id: id
-            }
+        function handleOnTimeOver(id) {
             clearInterval(interval)
-            // timeOverTasks().addExpiredTask(timeOverTaskInfo)
-            timeOverTasks().renderExpiredTasks()
+
             
+            const apiCall = handleApiCallEnhancer(() => timeOverTasks().render())
+            
+            apiCall(() => updateTask( {
+                field: {expired: true},
+                id: id
+            }))
+
+        //     handleApiCallEnhancer(() => timeOverTasks().init(), {
+        //         field: {expired: true},
+        //         id: id
+        //     })
+        //     handleApiCall(() => updateTask( {
+        //         field: {expired: true},
+        //         id: id
+        //     }, () => timeOverTasks().init()) );
         }
     }
-    
     listenerOnRemove(btn){
         btn.addEventListener('click', () => {
             let id = btn.closest('.task-item').id;
