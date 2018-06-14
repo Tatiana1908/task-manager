@@ -1,6 +1,6 @@
 
-import {handleApiCall} from "./utils";
-import { postTask} from "./api";
+import { handleApiCall } from "./utils";
+import { postTask } from "./api";
 import tasksList from './tasks-list'
 
 export class Modal {
@@ -54,7 +54,7 @@ export class Modal {
 
             this.errorBlock.textContent = '';
 
-            handleApiCall(postTask(newTaskData), () => {
+            handleApiCall(() => postTask(newTaskData), () => {
                 tasksList().init();
                 this.toggleModal();
             })

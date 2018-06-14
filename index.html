@@ -7,13 +7,20 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Task manager</title>
 
-    <!-- font awesome -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 
 </head>
 <body>
     <main>
         <span class="add-task-btn"><i class="fas fa-plus-circle"></i></span>
+        <div class="expired-tasks-overlay">
+            <div class="expired-tasks-modal">
+                <span class="number"></span>
+                <span class="prev">Prev</span>
+                <span class="next">Next</span>
+                <span class="description"></span>
+                <button class="remove-task">Remove</button>
+            </div>
+        </div>
         <div class="add-task-overlay">
             <div class="add-task-modal">
                 <form action="" >
